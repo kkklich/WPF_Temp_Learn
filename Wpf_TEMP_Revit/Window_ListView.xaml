@@ -1,0 +1,28 @@
+﻿<Window x:Class="Wpf_TEMP_Revit.Window_ListView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Wpf_TEMP_Revit"
+        mc:Ignorable="d"
+        Title="Window_ListView" Height="450" Width="800">
+    <Grid>
+
+        <ComboBox x:Name="cmb_name" ItemsSource="{Binding Path=PhonebookEntries}"
+                  DisplayMemberPath="Name"
+                  SelectedValuePath="Name"
+                  SelectedValue="{Binding Path=PhonebookEntry}" Margin="48,45,462,331" SelectionChanged="ComboBox_SelectionChanged" />
+
+        <Button Content="{Binding Path=ButtonName}"  Margin="48,312,546,74" Click="Button_Click"/>
+
+        <TextBlock x:Name="txt_text"  TextWrapping="Wrap" Margin="249,256,281,130">
+
+        </TextBlock>
+        <DataGrid x:Name="Grid_Json" ItemsSource="{Binding RatesCollection}" Margin="285,242,32,10"/>
+        <Image Source="/Resources/TrapezFrame1.png" Margin="375,45,100,257" />
+
+
+
+
+    </Grid>
+</Window>

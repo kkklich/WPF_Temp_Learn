@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31624.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wpf_TEMP_Revit", "Wpf_TEMP_Revit\Wpf_TEMP_Revit.csproj", "{BEB1F4FE-A4C5-46B4-811B-0DAEB0167978}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BEB1F4FE-A4C5-46B4-811B-0DAEB0167978}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEB1F4FE-A4C5-46B4-811B-0DAEB0167978}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEB1F4FE-A4C5-46B4-811B-0DAEB0167978}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEB1F4FE-A4C5-46B4-811B-0DAEB0167978}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1BCBAB5F-45D1-40D9-8954-9ADA249D77A2}
+	EndGlobalSection
+EndGlobal
