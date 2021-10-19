@@ -25,47 +25,13 @@ namespace Wpf_TEMP_Revit
     /// Interaction logic for Window_ListView.xaml
     /// </summary>
     /// 
-
-    //public class MyData : INotifyPropertyChanged
-    //{
-    //    private string myDataProperty;
-
-    //    public MyData() { }
-
-    //    public MyData(DateTime dateTime)
-    //    {
-    //        myDataProperty = "Last bound time was " + dateTime.ToLongTimeString();
-    //    }
-
-    //    public String MyDataProperty
-    //    {
-    //        get { return myDataProperty; }
-    //        set
-    //        {
-    //            myDataProperty = value;
-    //            OnPropertyChanged("MyDataProperty");
-    //        }
-    //    }
-
-    //    public event PropertyChangedEventHandler PropertyChanged;
-
-    //    private void OnPropertyChanged(string info)
-    //    {
-    //        PropertyChangedEventHandler handler = PropertyChanged;
-    //        if (handler != null)
-    //        {
-    //            handler(this, new PropertyChangedEventArgs(info));
-    //        }
-    //    }
-    //}
-
+        
     public class PhoneBookEntry 
     {
         public string Name { get; set; }
         public int Number { get; set; }
 
         public PhoneBookEntry() { }
-
         public PhoneBookEntry(string Name)
         {
             this.Name = Name;
@@ -76,72 +42,6 @@ namespace Wpf_TEMP_Revit
         }
     }
 
-
-    //public class ConnectionViewModel : INotifyPropertyChanged
-    //{
-        //public event PropertyChangedEventHandler PropertyChanged;
-        //private string _phonebookEntry;
-
-        //private readonly CollectionView _phonebookEntries;
-
-        //public ConnectionViewModel()
-        //{
-        //    IList<PhoneBookEntry> list = new List<PhoneBookEntry>()
-        //    {
-        //        //new PhoneBookEntry(){ Name = "test1", Number = 5 }
-        //    };
-
-        //    list.Add(new PhoneBookEntry("test2"));
-        //    list.Add(new PhoneBookEntry("test3"));
-        //    list.Add(new PhoneBookEntry("test4"));
-        //    _phonebookEntries = new CollectionView(list);
-
-        //    listString.Add("Słowo 1");
-        //    listString.Add("Słowo 2");
-        //    listString.Add("Słowo 3");
-        //    listString.Add("Słowo 4");
-        //    _stringi = new CollectionView(listString);
-
-        //}
-
-        //public CollectionView PhonebookEntries
-        //{
-        //    get { return _phonebookEntries; }
-        //}
-
-        //public string PhonebookEntry
-        //{
-        //    get { return _phonebookEntry; }
-        //    set
-        //    {
-        //        if (_phonebookEntry == value) return;
-        //        _phonebookEntry = value;
-        //        OnPropertyChanged("PhonebookEntry");
-        //    }
-        //}
-
-        //private void OnPropertyChanged(string propertyName)
-        //{
-        //    if (PropertyChanged != null)
-        //        PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        //}
-
-
-
-        ////Stringi
-
-        //ObservableCollection<string> listString = new ObservableCollection<string>();
-        //private readonly CollectionView _stringi;
-
-
-        //public CollectionView Stringi
-        //{
-        //    get { return _stringi; }
-        //}
-
-    //}
-
-
     public partial class Window_ListView : Window, INotifyPropertyChanged
     {
         private ObservableCollection<string> listString = new ObservableCollection<string>();
@@ -151,6 +51,19 @@ namespace Wpf_TEMP_Revit
         private PhoneBookEntry phoneData;
         private string myDataProperty;
         private ObservableCollection<Rates> ratesCollection;
+        private List<Rates> ratesList;
+        public List<Rates> RatesList
+        {
+            get
+            {
+                return ratesList;
+            }
+            set
+            {
+                ratesList = value;
+                OnPropertyChanged();
+            }
+        }
 
         public ObservableCollection<Rates> RatesCollection
         {
@@ -165,7 +78,6 @@ namespace Wpf_TEMP_Revit
             }
         }
 
-
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = "")
         {
@@ -177,26 +89,17 @@ namespace Wpf_TEMP_Revit
             InitializeComponent();
 
             LoadTodataContext();
-
-           // DataContext = this;
+            RatesList=NbpSetData();
+            DataContext = this;
         }
 
         void LoadTodataContext()
         {
-            DateTime time1 = DateTime.Now;
+            //Task<ObservableCollection<Rates>> task1 = Task.Run(loadNbp);
+            //var collections = task1.GetAwaiter().GetResult();
+            //RatesCollection = collections;
 
-            Task<ObservableCollection<Rates>> task1 = Task.Run(loadNbp);
-            var collections = task1.GetAwaiter().GetResult();
-            RatesCollection = collections;
-
-            DateTime time2 = DateTime.Now;
-            TimeSpan ts = time2.Subtract(time1);
-            MessageBox.Show(ts.ToString());
-
-            JsonAlphaVantage();
             Setdata();
-
-            DataContext = this;
         }
 
         async Task<ObservableCollection<Rates>> loadNbp()
@@ -206,50 +109,11 @@ namespace Wpf_TEMP_Revit
             return ratesCol;
         }
 
-        private void GetDataJson()
+        List<Rates> NbpSetData()
         {
-            string Query_Url = "http://api.nbp.pl/api/exchangerates/rates/A/USD/2020-09-28/2021-09-28";
-            Uri uriQuery = new Uri(Query_Url);
-
-
-           // string str = "type your json url here";
-            WebClient webClient = new WebClient();
-            if (webClient == null)
-            {
-                webClient = new WebClient();
-            }
-            else
-            {
-                webClient.Dispose();
-                webClient = null;
-                webClient = new WebClient();
-            }
-            DataTable JsonDataTable = new DataTable();
-            //Set Header  
-            //webClient.Headers["User-Agent"] = "Mozilla/4.0 (Compatible; Windows NT 5.1; MSIE 6.0) (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727)";
-            //Download Content  
-            string JsonSting = webClient.DownloadString(Query_Url);
-            //Convert JSON to Datatable  
-           // JsonDataTable = (DataTable)JsonConvert.DeserializeObject(JsonSting, (typeof(DataTable)));
-            JsonDataTable.TableName = "JSON_MAST";
-            //JsonDataTable.
-            Grid_Json.DataContext = JsonDataTable.DefaultView;
-        }
-
-
-        void JsonAlphaVantage()
-        {
-            string QUERY_URL = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=IBM&interval=5min&apikey=demo";
-            Uri queryUri = new Uri(QUERY_URL);
-
-            using (WebClient client = new WebClient())
-            {
-              //  var json_data = JsonSerializer.Deserialize<Dictionary<string, dynamic>>(client.DownloadString(queryUri));
-
-                //json_data.GetType();
-              //  MessageBox.Show(json_data.Values.Count.ToString());
-            }
-            
+            DateTime fromDate = new DateTime(2021, 9, 15);
+            Nbp dataNbp = NBPclass.StockDataNbp(fromDate);
+            return dataNbp.Rates;          
         }
 
         void Setdata()

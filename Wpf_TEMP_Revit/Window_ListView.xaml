@@ -18,7 +18,7 @@
         <TextBlock x:Name="txt_text"  TextWrapping="Wrap" Margin="249,256,281,130">
 
         </TextBlock>
-        <DataGrid x:Name="Grid_Json" ItemsSource="{Binding RatesCollection}" Margin="285,242,32,10"/>
+        <DataGrid x:Name="Grid_Json" ItemsSource="{Binding RatesList}" Margin="285,242,32,10"/>
         <Image Source="/Resources/TrapezFrame1.png" Margin="375,45,100,257" />
 
 

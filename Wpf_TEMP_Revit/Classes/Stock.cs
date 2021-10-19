@@ -6,65 +6,78 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Wpf_TEMP_Revit.Classes
 {
-    public class Stock
+    public class StockData
     {
-        public async static Task<MetaData> DownloadStockAPI()
+        public static Stock StockSetData()
         {
-            string url = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=FB&interval=5min&apikey=5X11Y9T9A3LX1HC2";
-
-            HttpClient ApiClient = new HttpClient();
-            ApiClient.DefaultRequestHeaders.Accept.Clear();
-            ApiClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-            using (HttpResponseMessage response = await ApiClient.GetAsync(url))
-            {
-                if (response.IsSuccessStatusCode)
-                {
-                    var result = await response.Content.ReadAsAsync<MetaData>();
-                    return result;
-                }
-                else
-                {
-                    throw new Exception(response.ReasonPhrase);
-                }
-            }
-        }
-
-
-        public static Dictionary<string, dynamic> StockData()
-        {
-            //string QUERY_URL = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=IBM&interval=5min&apikey=demo";
-            string QUERY_URL = "http://api.nbp.pl/api/exchangerates/rates/A/USD/";
+            string QUERY_URL = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=FB&interval=5min&apikey=5X11Y9T9A3LX1HC2";
             Uri queryUri = new Uri(QUERY_URL);
 
             using (WebClient client = new WebClient())
             {
-                dynamic json_data = JsonSerializer.Deserialize<Dictionary<string, dynamic>>(client.DownloadString(queryUri));
-                
+                dynamic json_data = JsonSerializer.Deserialize<Stock>(client.DownloadString(queryUri));
+
                 return json_data;
             }
         }
-        public class MetaData
-        {
-            public string Information { get; set; }
-            public string Symbol { get; set; }
-            public DateTime LastRefreshed { get; set; }
-            public string Interval { get; set; }
-            public string OutputSize { get; set; }
-            public string TimeZone { get; set; }
-
-            public List<TimeSeries> TimeSeries { get; set; }
-        }
+    }
 
 
-        public class TimeSeries
-        {
-            public DateTime TimeSeriesTime { get; set; }
-        }
+    public class Stock
+    {
+        [JsonPropertyName("Meta Data")]
+        public MetaData MetaData { get; set; }       
+
+        [JsonPropertyName("Time Series (5min)")]
+        public List<TimeSeries5min> timeSeries5Min { get; set; }
+        //public TimeSeries TimeSeries { get; set; }
+    }
+
+
+    public class MetaData
+    {
+        [JsonPropertyName("1. Information")]
+        public string Information { get; set; }
+        [JsonPropertyName("2. Symbol")]
+        public string Symbol { get; set; }
+        [JsonPropertyName("3. Last Refreshed")]
+        public string LastRefreshed { get; set; }
+        [JsonPropertyName("4. Interva")]
+        public string Interval { get; set; }
+        [JsonPropertyName("5. Output Size")]
+        public string OutputSize { get; set; }
+        [JsonPropertyName("6. Time Zone")]
+        public string TimeZone { get; set; }
+    }
+
+
+    public class TimeSeries5min
+    {
+        List<string> dataSerii { get; set; }
+    }
+
+    public class TimeSeries
+    {        
+        
+        [JsonPropertyName("1. open")]
+        public string Open { get; set; }
+        [JsonPropertyName("2. high")]
+        public string High { get; set; }
+        [JsonPropertyName("3. low")]
+        public string Low { get; set; }
+      
+        [JsonPropertyName("  4. close")]
+        public string Close { get; set; }
+        [JsonPropertyName("5. volume")]
+        public string Volume { get; set; }
+
 
     }
+
+    
 }

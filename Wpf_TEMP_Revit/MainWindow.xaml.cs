@@ -19,6 +19,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 using System.Data;
 using System.Web;
@@ -30,6 +31,7 @@ using System.Reflection;
 using System.Threading;
 using Wpf_TEMP_Revit.Classes;
 using static Wpf_TEMP_Revit.Classes.Stock;
+
 
 
 
@@ -112,6 +114,19 @@ namespace Wpf_TEMP_Revit
         string Result { get; set; }
 
         public String TimeClockNow { get; set; }
+        private DateTime dateNow;
+        public DateTime DateNow
+        {
+            get
+            {
+                return dateNow;
+            }
+            set
+            {
+                dateNow = value;
+                OnPropertyChanged();
+            }
+        }
 
         private MetaData stockCollection;
         public MetaData StockCollection
@@ -142,6 +157,34 @@ namespace Wpf_TEMP_Revit
             }
         }
 
+        private List<Rates> ratesList;
+        public List<Rates> RatesList
+        {
+            get
+            {
+                return ratesList;
+            }
+            set
+            {
+                ratesList = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private DateTime selectedDate;
+        public DateTime SelectedDate
+        {
+            get
+            {
+                return selectedDate;
+            }
+            set
+            {
+                selectedDate = value;
+                OnPropertyChanged();
+            }
+        }
+
         public Person SelectedPerson
         {
             get{
@@ -154,110 +197,55 @@ namespace Wpf_TEMP_Revit
             }
         }
 
-        public MainWindow()
-        {
-           InitializeComponent();
-           //LoadTodataContext();
-           //AsynchoricMethod();
-            StockDataShow();
-        }
-
-        void AsynchoricMethod()
-        {
-
-            //var parent = Task.Factory.StartNew(() =>
-            //{
-            //    MessageBox.Show("xd 1");
-            //    var child = Task.Factory.StartNew(() =>
-            //    {
-            //        MessageBox.Show("dzzzz21");
-            //        Thread.Sleep(3000);
-            //        MessageBox.Show("dzzzz22");
-            //    });
-
-            //    MessageBox.Show("Xd 2");
-
-            //});
-
-            
-            //parent.GetAwaiter();
-        }
-
-        int doSmth()
-        {
-            return 1434;
-        }
-
-        void DoMethod()
-        {
-
-        }
-
-        void LoadTodataContext()
-        {
-           // DateTime time1 = DateTime.Now;
-            Task<ObservableCollection<Rates>> task1 = Task.Run(loadNbp);          
-            var collections = task1.GetAwaiter().GetResult();
-            RatesCollection = collections;
-
-
-            Task<MetaData> metaDatas = Task.Run(loadStock);
-            var collectionsStocks = metaDatas.GetAwaiter().GetResult();
-            StockCollection = collectionsStocks;
-
-            //DateTime time2 = DateTime.Now;
-            //TimeSpan ts = time2.Subtract(time1);
-            //MessageBox.Show(ts.ToString());
-
-            // List<Person> listyPerson = addListPerson();
-            //List<Identificator> listyIdentyfikator = addToLista();
-
-            DataContext = this;
-        }
-
-        async Task<ObservableCollection<Rates>> loadNbp()
-        {
-            var myTask = Task.Run(() => NBPclass.LoadDataFromNbp());                      
-            ObservableCollection<Rates> ratesCol = await myTask;
-            return ratesCol;
-
-        }
-
-        async Task<MetaData> loadStock()
-        {
-            var myTask1 = Task.Run(() => Stock.DownloadStockAPI());
-            MetaData stockData = await myTask1;
-            MessageBox.Show("stockData.Information: "+stockData.Information + " stockData.TimeSeries: " + stockData.TimeSeries);
-            return stockData;
-        }
-
-        void StockDataShow()
-        {
-            var x = Stock.StockData();
-            foreach (var item in x)
-            {
-               // MessageBox.Show("Key: " + item.Key.ToString()+" Value: " + item.Value.ToString());
-                //MessageBox.Show("Value: "+item.Value.ToString());
-                //if(item.Key=="rates")
-                //{
-                //    dynamic ratesValue = JsonSerializer.Deserialize<Dictionary<string, dynamic>>(item.Value);
-
-                //    foreach(var rates in ratesValue)
-                //    {
-                //        MessageBox.Show(rates.key.ToString()+ "  value: " + rates.value.ToString());
-                //    }
-                //}
-            }
-          //  MessageBox.Show("xxx: "+x +"  type "+x.GetType());
-        }
-
-
-
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+
+        public MainWindow()
+        {
+            InitializeComponent();
+            DateTime dateTimeStart = new DateTime(2021, 10, 16);
+            RatesList = NbpDataShow(dateTimeStart);
+
+            SelectedDate = DateTime.Now;
+            List<Person> listyPerson = addListPerson();
+            List<Identificator> listyIdentyfikator = addToLista();
+
+        
+            DataContext = this;
+        }
+
+        List<Rates> NbpDataShow(DateTime fromDate)
+        {            
+            Nbp dataNbp = NBPclass.StockDataNbp(fromDate);
+            //RatesList = dataNbp.Rates;
+            return dataNbp.Rates;
+            //foreach(var item in RatesList)
+            //{
+            //   // MessageBox.Show(item.EffectiveDate + "  " + item.Mid);
+            //}
+        }
+
+        private void DatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //if (RatesList != null)
+               // RatesList.Clear();
+            RatesList = NbpDataShow(SelectedDate);
+            NbpdataGrid.ItemsSource = RatesList;
+        }
+
+        void SetDataContext()
+        {
+            List<Person> listyPerson = addListPerson();
+            List<Identificator> listyIdentyfikator = addToLista();
+
+            DateTime dateTimeStart = new DateTime(2021, 10, 16);
+            RatesList= NbpDataShow(dateTimeStart);
+            DataContext = this;
+        }
+
 
         List<Identificator> addToLista()
         {
@@ -278,6 +266,37 @@ namespace Wpf_TEMP_Revit
             return ListPerson;                
         }
 
+        void LoadTodataContext()
+        {
+            Task<ObservableCollection<Rates>> task1 = Task.Run(loadNbp);
+            var collections = task1.GetAwaiter().GetResult();
+            RatesCollection = collections;
+
+            //Task<MetaData> metaDatas = Task.Run(loadStock);
+            //var collectionsStocks = metaDatas.GetAwaiter().GetResult();
+            //StockCollection = collectionsStocks;
+
+            List<Person> listyPerson = addListPerson();
+            List<Identificator> listyIdentyfikator = addToLista();
+
+            DataContext = this;
+        }
+
+        async Task<ObservableCollection<Rates>> loadNbp()
+        {
+            var myTask = Task.Run(() => NBPclass.LoadDataFromNbp());
+            ObservableCollection<Rates> ratesCol = await myTask;
+            return ratesCol;
+        }
+
+        //async Task<MetaData> loadStock()
+        //{
+        //    //var myTask1 = Task.Run(() => StockData.StockSetData() );
+        //    //MetaData stockData = await myTask1;
+        //   // MessageBox.Show("stockData.Information: "+stockData.Information + " stockData.TimeSeries: " + stockData.TimeSeries);
+        ////    return stockData;
+        //}
+
         private void cmb_Pole1_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ListPerson = new List<Person>();
@@ -288,11 +307,7 @@ namespace Wpf_TEMP_Revit
         
         private void cmb_Pole3_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Result = SelectedPerson.FirstName.ToString();
-            //TxtB_Pole6.Text = SelectedPerson.SureName;
-            //listyPerson.ListPerson.Add(new Person("asd", "qwe"));
-
-           // DataContext = Result;
+            Result = SelectedPerson.FirstName.ToString();           
         }
 
         private void HyperLink_NewTemplate_Click(object sender, RoutedEventArgs e)
@@ -318,6 +333,6 @@ namespace Wpf_TEMP_Revit
                     return reader.ReadToEnd();
                 }
             }
-        }
+        }      
     }
 }

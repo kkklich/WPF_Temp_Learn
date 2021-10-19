@@ -54,14 +54,12 @@
         <TextBlock Text="{Binding TimeClockNow}" FontSize="20" Grid.Column="0" Grid.Row="5" >
             <Run Text=":"/>
         </TextBlock>
-        <TextBlock  FontSize="11" Grid.Column="1" Grid.Row="4" ><Hyperlink x:Name="HyperLink_NewTemplate" Click="HyperLink_NewTemplate_Click"  > Add new template</Hyperlink></TextBlock>
-
-        <Slider x:Name="Slider_size_font" Maximum="100" Minimum="1" Value="{Binding ElementName=txt_number, Path=Text}"  Grid.Column="1" Grid.Row="5" SmallChange="3" Interval="1" TickFrequency="6" LargeChange="8"   ></Slider>
 
         <Grid  Grid.Row="6" Grid.RowSpan="4"  Grid.ColumnSpan="2">
-            <DataGrid x:Name="NbpdataGrid"  ItemsSource="{Binding StockCollection }" />
+            <DataGrid x:Name="NbpdataGrid"  ItemsSource="{Binding RatesList}" />
         </Grid>
        
         <Button Content="Button" IsEnabled="{Binding ButtonUseEnabled}" Click="BtnUseClick" Grid.Column="1" Grid.Row="10" />
+        <DatePicker x:Name="DataPickerNbp" Grid.Column="1"  DisplayDate="{Binding DateNow}"  SelectedDate="{Binding SelectedDate}"  HorizontalAlignment="Left" Margin="179,10,0,0" Grid.Row="5" VerticalAlignment="Top" SelectedDateChanged="DatePicker_SelectedDateChanged" />
     </Grid>
 </Window>
